@@ -1,0 +1,9 @@
+
+# Approval configuration
+approval_policy = "on-request"
+
+# Workspace permissions
+sandbox_mode = "workspace-write"
+
+[sandbox_workspace_write]
+network_access = false
