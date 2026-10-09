@@ -1,0 +1,18 @@
+
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "node .codex/hooks/format_file.js",
+            "timeout": 60,
+            "statusMessage": "Formatting modified files with Prettier"
+          }
+        ]
+      }
+    ]
+  }
+}
