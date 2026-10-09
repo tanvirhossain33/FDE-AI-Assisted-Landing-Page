@@ -22,3 +22,8 @@
 - Never read, open, inspect, or display `.env` files.
 - Never expose environment variables containing secrets.
 - Never commit `.env` files.
+
+## Formatting Rules
+- Format all newly created and modified supported files using Prettier.
+- Run Prettier after creating or editing files.
+- Follow the project's existing Prettier configuration.
