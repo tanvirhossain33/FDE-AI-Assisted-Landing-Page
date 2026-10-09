@@ -1,0 +1,36 @@
+
+# Allow tests
+prefix_rule(
+    pattern = ["npm", "test"],
+    decision = "allow",
+)
+
+# Allow linting
+prefix_rule(
+    pattern = ["npm", "run", "lint"],
+    decision = "allow",
+)
+
+# Ask before installing dependencies
+prefix_rule(
+    pattern = ["npm", "install"],
+    decision = "prompt",
+)
+
+# Deny destructive Git commands
+prefix_rule(
+    pattern = ["git", "reset", "--hard"],
+    decision = "forbidden",
+)
+
+prefix_rule(
+    pattern = ["git", "push"],
+    decision = "forbidden",
+)
+
+prefix_rule(
+    pattern = ["rm", "-rf"],
+    decision = "forbidden",
+    justification = "Recursive force deletion is prohibited.",
+)
+
