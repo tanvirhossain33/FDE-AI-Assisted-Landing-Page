@@ -74,6 +74,7 @@ async function handleUpdateTodo(
   response: ServerResponse,
   store: TodoStore,
   id: number,
+  requireTitle: boolean,
 ): Promise<void> {
   let body: unknown;
   try {
@@ -83,26 +84,42 @@ async function handleUpdateTodo(
     return;
   }
 
-  if (!isRecord(body) || typeof body.title !== "string") {
+  if (!isRecord(body)) {
+    sendJson(response, 400, { error: "Request body must be an object" });
+    return;
+  }
+
+  const hasTitle = Object.prototype.hasOwnProperty.call(body, "title");
+  const hasCompleted = Object.prototype.hasOwnProperty.call(body, "completed");
+
+  if (requireTitle && !hasTitle) {
     sendJson(response, 400, { error: "Title is required" });
     return;
   }
 
-  const title = body.title.trim();
-  if (title.length === 0) {
-    sendJson(response, 400, { error: "Title is required" });
+  if (!hasTitle && !hasCompleted) {
+    sendJson(response, 400, { error: "At least one field is required" });
     return;
   }
 
-  if (body.completed !== undefined && typeof body.completed !== "boolean") {
-    sendJson(response, 400, { error: "Completed must be a boolean" });
-    return;
+  const changes: { title?: string; completed?: boolean } = {};
+  if (hasTitle) {
+    if (typeof body.title !== "string" || body.title.trim().length === 0) {
+      sendJson(response, 400, { error: "Title is required" });
+      return;
+    }
+    changes.title = body.title.trim();
   }
 
-  const todo = store.update(id, {
-    title,
-    ...(body.completed === undefined ? {} : { completed: body.completed }),
-  });
+  if (hasCompleted) {
+    if (typeof body.completed !== "boolean") {
+      sendJson(response, 400, { error: "Completed must be a boolean" });
+      return;
+    }
+    changes.completed = body.completed;
+  }
+
+  const todo = store.update(id, changes);
   if (!todo) {
     sendJson(response, 404, { error: "Todo not found" });
     return;
@@ -133,7 +150,8 @@ export async function handleTodoRoutes(
   if (
     (request.method !== "GET" &&
       request.method !== "DELETE" &&
-      request.method !== "PUT") ||
+      request.method !== "PUT" &&
+      request.method !== "PATCH") ||
     !match
   ) {
     return false;
@@ -156,8 +174,14 @@ export async function handleTodoRoutes(
     return true;
   }
 
-  if (request.method === "PUT") {
-    await handleUpdateTodo(request, response, store, id);
+  if (request.method === "PUT" || request.method === "PATCH") {
+    await handleUpdateTodo(
+      request,
+      response,
+      store,
+      id,
+      request.method === "PUT",
+    );
     return true;
   }
 
