@@ -1,0 +1,17 @@
+{
+  "name": "todo-api",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "tsc --project tsconfig.json",
+    "dev": "npm run build && node dist/src/server.js",
+    "test": "npm run build && node --test --test-isolation=none dist/tests/*.test.js",
+    "lint": "prettier --check package.json tsconfig.json src tests",
+    "format": "prettier --write package.json tsconfig.json src tests"
+  },
+  "devDependencies": {
+    "@types/node": "^24.0.0",
+    "prettier": "^3.6.0",
+    "typescript": "^5.9.0"
+  }
+}
