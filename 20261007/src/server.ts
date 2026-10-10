@@ -3,8 +3,8 @@ import { handleTodoRoutes } from "./routes/todos";
 import { TodoStore } from "./todos";
 
 export function createTodoServer(store = new TodoStore()): Server {
-  return createServer((request, response) => {
-    if (handleTodoRoutes(request, response, store)) {
+  return createServer(async (request, response) => {
+    if (await handleTodoRoutes(request, response, store)) {
       return;
     }
 
