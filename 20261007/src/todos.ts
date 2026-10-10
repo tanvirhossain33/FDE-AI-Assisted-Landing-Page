@@ -30,6 +30,20 @@ export class TodoStore {
     return this.todos.get(id);
   }
 
+  update(
+    id: number,
+    changes: Partial<Pick<Todo, "title" | "completed">>,
+  ): Todo | undefined {
+    const todo = this.todos.get(id);
+    if (!todo) {
+      return undefined;
+    }
+
+    const updatedTodo = { ...todo, ...changes };
+    this.todos.set(id, updatedTodo);
+    return updatedTodo;
+  }
+
   delete(id: number): boolean {
     return this.todos.delete(id);
   }

@@ -69,6 +69,48 @@ async function handleCreateTodo(
   sendJson(response, 201, todo, { Location: `/todos/${todo.id}` });
 }
 
+async function handleUpdateTodo(
+  request: IncomingMessage,
+  response: ServerResponse,
+  store: TodoStore,
+  id: number,
+): Promise<void> {
+  let body: unknown;
+  try {
+    body = await readJsonBody(request);
+  } catch {
+    sendJson(response, 400, { error: "Request body must be valid JSON" });
+    return;
+  }
+
+  if (!isRecord(body) || typeof body.title !== "string") {
+    sendJson(response, 400, { error: "Title is required" });
+    return;
+  }
+
+  const title = body.title.trim();
+  if (title.length === 0) {
+    sendJson(response, 400, { error: "Title is required" });
+    return;
+  }
+
+  if (body.completed !== undefined && typeof body.completed !== "boolean") {
+    sendJson(response, 400, { error: "Completed must be a boolean" });
+    return;
+  }
+
+  const todo = store.update(id, {
+    title,
+    ...(body.completed === undefined ? {} : { completed: body.completed }),
+  });
+  if (!todo) {
+    sendJson(response, 404, { error: "Todo not found" });
+    return;
+  }
+
+  sendJson(response, 200, todo);
+}
+
 export async function handleTodoRoutes(
   request: IncomingMessage,
   response: ServerResponse,
@@ -88,7 +130,12 @@ export async function handleTodoRoutes(
 
   const match = pathname.match(/^\/todos\/([^/]+)\/?$/);
 
-  if ((request.method !== "GET" && request.method !== "DELETE") || !match) {
+  if (
+    (request.method !== "GET" &&
+      request.method !== "DELETE" &&
+      request.method !== "PUT") ||
+    !match
+  ) {
     return false;
   }
 
@@ -106,6 +153,11 @@ export async function handleTodoRoutes(
     }
 
     sendJson(response, 200, todo);
+    return true;
+  }
+
+  if (request.method === "PUT") {
+    await handleUpdateTodo(request, response, store, id);
     return true;
   }
 
