@@ -88,13 +88,24 @@ export async function handleTodoRoutes(
 
   const match = pathname.match(/^\/todos\/([^/]+)\/?$/);
 
-  if (request.method !== "DELETE" || !match) {
+  if ((request.method !== "GET" && request.method !== "DELETE") || !match) {
     return false;
   }
 
   const id = Number(match[1]);
   if (!Number.isSafeInteger(id) || id < 1) {
     sendJson(response, 400, { error: "Todo id must be a positive integer" });
+    return true;
+  }
+
+  if (request.method === "GET") {
+    const todo = store.get(id);
+    if (!todo) {
+      sendJson(response, 404, { error: "Todo not found" });
+      return true;
+    }
+
+    sendJson(response, 200, todo);
     return true;
   }
 

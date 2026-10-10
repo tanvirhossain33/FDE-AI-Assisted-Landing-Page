@@ -26,6 +26,10 @@ export class TodoStore {
     return [...this.todos.values()];
   }
 
+  get(id: number): Todo | undefined {
+    return this.todos.get(id);
+  }
+
   delete(id: number): boolean {
     return this.todos.delete(id);
   }
