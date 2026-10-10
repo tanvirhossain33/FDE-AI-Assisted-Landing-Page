@@ -76,6 +76,11 @@ export async function handleTodoRoutes(
 ): Promise<boolean> {
   const pathname = new URL(request.url ?? "/", "http://localhost").pathname;
 
+  if (request.method === "GET" && /^\/todos\/?$/.test(pathname)) {
+    sendJson(response, 200, store.all());
+    return true;
+  }
+
   if (request.method === "POST" && /^\/todos\/?$/.test(pathname)) {
     await handleCreateTodo(request, response, store);
     return true;

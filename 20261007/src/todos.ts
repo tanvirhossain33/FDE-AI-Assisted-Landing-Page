@@ -22,6 +22,10 @@ export class TodoStore {
     return todo;
   }
 
+  all(): Todo[] {
+    return [...this.todos.values()];
+  }
+
   delete(id: number): boolean {
     return this.todos.delete(id);
   }
