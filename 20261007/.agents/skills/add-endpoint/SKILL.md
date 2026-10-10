@@ -13,4 +13,3 @@ Steps:
 2. Create the route handler.
 3. Add a test in `tests/`.
 4. Run `npm test` and fix any failures caused by the changes.
-5. Show me the final diff.
