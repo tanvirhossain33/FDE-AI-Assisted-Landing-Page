@@ -10,3 +10,11 @@ network_access = false
 
 [features]
 hooks = true
+
+
+[mcp_servers.github]
+url = "https://api.githubcopilot.com/mcp/"
+bearer_token_env_var = "GITHUB_PAT_TOKEN"
+enabled = true
+startup_timeout_sec = 60
+tool_timeout_sec = 120

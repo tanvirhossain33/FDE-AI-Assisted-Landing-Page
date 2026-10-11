@@ -1,4 +1,3 @@
-
 ---
 name: add-endpoint
 description: Add a new REST endpoint with a test.
@@ -12,4 +11,4 @@ Steps:
 1. Read existing routes in `src/routes/` to match the style.
 2. Create the route handler.
 3. Add a test in `tests/`.
-4. Run `npm test` and fix any failures caused by the changes.
+4. Run `npm test` and fix failures caused by the changes.
